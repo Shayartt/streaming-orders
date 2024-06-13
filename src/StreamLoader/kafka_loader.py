@@ -65,7 +65,7 @@ class KafkaStreamLoader(MainStreamLoader):
                 .format("kafka")
                 .option("kafka.bootstrap.servers", self.__confluentBootstrapServers)
                 .option("kafka.security.protocol", "SASL_SSL")
-                .option("kafka.sasl.jaas.config", "kafkashaded.org.apache.kafka.common.security.plain.PlainLoginModule required username='{}' password='{}';".format(confluentApiKey, confluentSecret))
+                .option("kafka.sasl.jaas.config", "kafkashaded.org.apache.kafka.common.security.plain.PlainLoginModule required username='{}' password='{}';".format(self.__confluentApiKey, self.__confluentSecret))
                 .option("kafka.ssl.endpoint.identification.algorithm", "https")
                 .option("kafka.sasl.mechanism", "PLAIN")
                 .option("subscribe", self._confluentTopicName)
