@@ -1,6 +1,12 @@
 # streaming-orders
 Project to stream real-time orders and apply some ETL pipelines &amp; analytics using DataBricks, AWS
 
+### Documentation Diagram : 
+
+#### High Level Diagram Tec:
+![High-Level Diagram](docs/diagrams/streaming-orders-highlevel.drawio.png?raw=true "High-Level")
+
+More details to be included later...
 
 ### Milestones : 
 
@@ -20,4 +26,4 @@ Project to stream real-time orders and apply some ETL pipelines &amp; analytics 
     -  Data Enrichment: Enrich your streaming data with additional context from external data sources. For example, enrich order data with customer demographics or product details from a database.
     -  Real-Time Analytics and Reporting: Build real-time analytics and reporting dashboards using tools like Databricks SQL, Power BI, or Tableau. Visualize key metrics such as order volume, sales trends, and customer behavior.
  
-### Documentation Diagram : 
+
