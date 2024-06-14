@@ -96,10 +96,8 @@ class KafkaStreamLoader(MainStreamLoader):
         distinctValueSchemaIdDF = cachedDf.select(fn.col('valueSchemaId').cast('integer')).distinct()
         for valueRow in distinctValueSchemaIdDF.collect():
             currentValueSchemaId = sc.broadcast(valueRow.valueSchemaId)
-            print("The current schema ID is : " + str(currentValueSchemaId))
             currentValueSchema = sc.broadcast(getSchema(currentValueSchemaId.value))
             filterValueDF = cachedDf.filter(fn.col('valueSchemaId') == currentValueSchemaId.value)
-            filterValueDF.show()
             filterValueDF \
             .select('topic', 'partition', 'offset', 'timestamp', 'timestampType', 'key', from_avro('fixedValue', currentValueSchema.value, fromAvroOptions).alias('parsedValue')) \
             .write \
