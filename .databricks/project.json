@@ -2,5 +2,6 @@
   "host": "https://dbc-5aaa1fa6-b707.cloud.databricks.com/",
   "authType": "databricks-cli",
   "databricksPath": "c:\\Users\\MohamedMallouk\\.vscode\\extensions\\databricks.databricks-1.3.0-win32-x64\\bin\\databricks",
+  "clusterId": "0612-150551-o848b4wq",
   "workspacePath": "/Users/mallouk@payticconnect.com/.ide/streaming-orders-4533de1d"
 }

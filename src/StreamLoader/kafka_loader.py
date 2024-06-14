@@ -1,6 +1,7 @@
 from .main_loader import MainStreamLoader
 from pyspark.sql import SparkSession, DataFrame as SparkDataFrame
 
+
 # Kafka Dependencies : 
 from confluent_kafka.schema_registry import SchemaRegistryClient
 import ssl 
@@ -10,6 +11,8 @@ import pyspark.sql.functions as fn
 from pyspark.sql.types import StringType 
 from pyspark.sql.avro.functions import from_avro
 
+# Second party dependencies :
+from utils import get_secret_var
 
 
 class KafkaStreamLoader(MainStreamLoader):
@@ -34,10 +37,10 @@ class KafkaStreamLoader(MainStreamLoader):
         self.__confluentBootstrapServers = "pkc-921jm.us-east-2.aws.confluent.cloud:9092"
         self._confluentTopicName = topic_name
         self.__schemaRegistry = "https://psrc-yorrp.us-east-2.aws.confluent.cloud"
-        self.__confluentApiKey = dbutils.secrets.get(scope="my-secrets-scope", key="confluentApiKey")
-        self.__confluentSecret = dbutils.secrets.get(scope="my-secrets-scope", key="confluentSecret")
-        self.__schemaAPIKey = dbutils.secrets.get(scope="my-secrets-scope", key="schemaAPIKey")
-        self.__schemaSecret = dbutils.secrets.get(scope="my-secrets-scope", key="schemaSecret")
+        self.__confluentApiKey = get_secret_var(self.spark, "my-secrets-scope", "confluentApiKey")
+        self.__confluentSecret = get_secret_var(self.spark, "my-secrets-scope", "confluentSecret")
+        self.__schemaAPIKey = get_secret_var(self.spark, "my-secrets-scope", "schemaAPIKey")
+        self.__schemaSecret = get_secret_var(self.spark, "my-secrets-scope", "schemaSecret")
         self._deltaTablePath = deltaTablePath
         self._checkpointsPath = checkpointLocation
         
@@ -52,9 +55,15 @@ class KafkaStreamLoader(MainStreamLoader):
         # Init Streaming Obj : 
         self.streamingDf = self.read_stream()
         
+    def __str__(self) -> str:
+        return (f"KafkaStreaming tunnel for topic {self.topic_name} is ready to be used. \n Delta Table Path : {self.deltaTablePath} \n Checkpoint Location : {self.checkpointLocation} \n Schema Key : {self.__schemaAPIKey} \n Schema Secret : {self.__schemaSecret} \n Confluent Key : {self.__confluentApiKey} \n Confluent Secret : {self.__confluentSecret} \n Confluent Cluster Name : {self._confluentClusterName} \n Confluent Bootstrap Servers : {self.__confluentBootstrapServers} \n Confluent Topic Name : {self._confluentTopicName} \n Schema Registry : {self.__schemaRegistry}")
+        
+        
     def read_stream(self) -> SparkDataFrame:
         """
         Read bytes streaming from kafka and transform it into a Spark Streaming dataframe.
+        
+        :param offset_stream: str
         
         :return: SparkDataFrame
         """
@@ -69,7 +78,7 @@ class KafkaStreamLoader(MainStreamLoader):
                 .option("kafka.ssl.endpoint.identification.algorithm", "https")
                 .option("kafka.sasl.mechanism", "PLAIN")
                 .option("subscribe", self._confluentTopicName)
-                .option("startingOffsets", "earliest")
+                .option("startingOffsets", "latest")
                 .option("failOnDataLoss", "false")
                 .load()
                 .withColumn('key', fn.col("key").cast(StringType()))
@@ -92,11 +101,12 @@ class KafkaStreamLoader(MainStreamLoader):
         cachedDf = df.cache()
         fromAvroOptions = {"mode":"FAILFAST"}
         def getSchema(id):
-            return str(self.schema_registry_client.get_schema(id).schema_str)
+            return str(self.__schema_registry_client.get_schema(id).schema_str)
         distinctValueSchemaIdDF = cachedDf.select(fn.col('valueSchemaId').cast('integer')).distinct()
         for valueRow in distinctValueSchemaIdDF.collect():
-            currentValueSchemaId = sc.broadcast(valueRow.valueSchemaId)
-            currentValueSchema = sc.broadcast(getSchema(currentValueSchemaId.value))
+            print("My schema ID IS : ", valueRow.valueSchemaId)
+            currentValueSchemaId = self.spark.sparkContext.broadcast(valueRow.valueSchemaId)
+            currentValueSchema = self.spark.sparkContext.broadcast(getSchema(currentValueSchemaId.value))
             filterValueDF = cachedDf.filter(fn.col('valueSchemaId') == currentValueSchemaId.value)
             filterValueDF \
             .select('topic', 'partition', 'offset', 'timestamp', 'timestampType', 'key', from_avro('fixedValue', currentValueSchema.value, fromAvroOptions).alias('parsedValue')) \
