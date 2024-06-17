@@ -71,6 +71,7 @@ class Pipeline1(MainProcessor):
         super().__init__(1, spark)
         
     def process(self):
+        # IDEAS : You have payment method that can be lot of options you need to convert everything to USD
         self._df = self._df.withColumn("processed", lit(True))
         
     def load_data(self):
@@ -88,6 +89,7 @@ class Pipeline2(MainProcessor):
         super().__init__(2, spark)
         
     def process(self):
+        # IDEAS : Get city and postal code from shipping address
         self._df = self._df.withColumn("processed2", lit(True))
         
     def load_data(self):

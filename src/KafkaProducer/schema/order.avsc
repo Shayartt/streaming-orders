@@ -1,0 +1,58 @@
+{
+	"fields": [
+	  {
+		"name": "orderId",
+		"type": "string"
+	  },
+	  {
+		"name": "orderDate",
+		"type": "string"
+	  },
+	  {
+		"name": "customerId",
+		"type": "string"
+	  },
+	  {
+		"name": "shippingAddress",
+		"type": "string"
+	  },
+	  {
+		"name": "totalAmount",
+		"type": "double"
+	  },
+	  {
+		"name": "items",
+		"type": {
+		  "items": {
+			"fields": [
+			  {
+				"name": "productId",
+				"type": "string"
+			  },
+			  {
+				"name": "quantity",
+				"type": "int"
+			  }
+			],
+			"name": "OrderItem",
+			"type": "record"
+		  },
+		  "type": "array"
+		}
+	  },
+	  {
+		"name": "paymentMethod",
+		"type": "string"
+	  },
+	  {
+		"name": "paymentStatus",
+		"type": "string"
+	  },
+	  {
+		"name": "orderStatus",
+		"type": "string"
+	  }
+	],
+	"name": "Order",
+	"type": "record"
+  }
