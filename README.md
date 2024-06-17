@@ -6,6 +6,10 @@ Project to stream real-time orders and apply some ETL pipelines &amp; analytics 
 #### High Level Diagram Tec:
 ![High-Level Diagram](docs/diagrams/streaming-orders-highlevel.drawio.png?raw=true "High-Level")
 
+#### Data Flow : 
+![Data Flow Diagram](docs/diagrams/Low-level-data-flow.drawio.png?raw=true "Data Flow")
+
+
 More details to be included later...
 
 ### Milestones : 
