@@ -1,13 +1,13 @@
 from .main_loader import MainStreamLoader
 from pyspark.sql import SparkSession, DataFrame as SparkDataFrame
-
+import uuid
 
 # Kafka Dependencies : 
 from confluent_kafka.schema_registry import SchemaRegistryClient
 import ssl 
 
 # PySpark Dependencies : 
-import pyspark.sql.functions as fn 
+import pyspark.sql.functions as fn
 from pyspark.sql.types import StringType 
 from pyspark.sql.avro.functions import from_avro
 
@@ -104,24 +104,25 @@ class KafkaStreamLoader(MainStreamLoader):
             return str(self.__schema_registry_client.get_schema(id).schema_str)
         distinctValueSchemaIdDF = cachedDf.select(fn.col('valueSchemaId').cast('integer')).distinct()
         for valueRow in distinctValueSchemaIdDF.collect():
-            print("My schema ID IS : ", valueRow.valueSchemaId)
             currentValueSchemaId = self.spark.sparkContext.broadcast(valueRow.valueSchemaId)
             currentValueSchema = self.spark.sparkContext.broadcast(getSchema(currentValueSchemaId.value))
             filterValueDF = cachedDf.filter(fn.col('valueSchemaId') == currentValueSchemaId.value)
+            micro_batch_id = str(uuid.uuid4())
+            filterValueDF = filterValueDF.withColumn("batch_id", fn.lit(micro_batch_id))
             filterValueDF \
-            .select('topic', 'partition', 'offset', 'timestamp', 'timestampType', 'key', from_avro('fixedValue', currentValueSchema.value, fromAvroOptions).alias('parsedValue')) \
+            .select('batch_id','topic', 'partition', 'offset', 'timestamp', 'timestampType', 'key', from_avro('fixedValue', currentValueSchema.value, fromAvroOptions).alias('parsedValue')) \
             .write \
             .format("delta") \
             .mode("append") \
             .option("mergeSchema", "true") \
             .save(self._deltaTablePath)
             
-    def write_stream(self):
+    def write_stream(self, queryname = "ParseStreamFromConfluent"):
         """
         Function used to write streamed and parsed data into delta lake.
         """
         self.streamingDf.writeStream \
             .option("checkpointLocation", self._checkpointsPath) \
             .foreachBatch(self.parse_stream_data) \
-            .queryName("ParseStreamFromConfluent") \
+            .queryName(queryname) \
             .start()
