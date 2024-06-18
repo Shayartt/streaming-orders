@@ -1,8 +1,14 @@
-from pyspark.sql import SparkSession
+from pyspark.sql import SparkSession, DataFrame as SparkDataFrame
 from abc import ABC, abstractmethod
 import dataclasses
-from pyspark.sql.functions import col, lit
+from pyspark.sql.functions import col, lit, explode, broadcast, udf
+from pyspark.sql.types import ArrayType, StringType
 
+# Second level Import : 
+from KafkaProducer.schema.example_customer import list_orders, supported_crypto
+from utils import get_crypto_rates, get_add_details
+
+#Third parties import :
 from delta.tables import DeltaTable
 
 @dataclasses.dataclass
@@ -20,6 +26,9 @@ class MainProcessor(ABC):
             self.input_folder = f"s3://labdataset/delta/orders_pipeline_{self.pipeline_id-1}"
             
         self._df = None
+    
+    def __str__(self):
+        return f"Pipeline {self.pipeline_id} ready to process {self._df.count()} rows. \nCall the .process() function to processed."
     
     @abstractmethod
     def load_data(self):
@@ -65,14 +74,52 @@ class MainProcessor(ABC):
         """
         pass
     
+    @abstractmethod
+    def mark_as_processed(self) :
+        """
+        Mark the data as processed.
+        """
+        pass
+        # self._df = self._df.withColumn(f"PIPELINE_{self.pipeline_id}_processed", lit(True))
     
 class Pipeline1(MainProcessor):
     def __init__(self, spark: SparkSession):
         super().__init__(1, spark)
+    
+    def __str__(self):
+        return super().__str__()
         
     def process(self):
+        # Get orders columns from the parsed value : 
+        self._df = self._df.select(
+            col('batch_id'),
+            col('parsedValue.orderId').alias('orderId'),
+            col('parsedValue.orderDate').alias('orderDate'),
+            col('parsedValue.customerId').alias('customerId'),
+            col('parsedValue.shippingAddress').alias('shippingAddress'),
+            col('parsedValue.totalAmount').alias('totalAmount'),
+            col('parsedValue.items').alias('items'),
+            col('parsedValue.paymentMethod').alias('paymentMethod'),
+            col('parsedValue.paymentStatus').alias('paymentStatus'),
+            col('parsedValue.orderStatus').alias('orderStatus')
+        )
+        # Here the items columns is a list of dict, we need to explode it :
+        self._df = self._df.withColumn("item", explode(col("items")))
+        
+        # Instead of leaving it as a dict, we'll extract the productId and quantity from it :
+        self._df = self._df.withColumn("productId", col("item.productId"))
+        self._df = self._df.withColumn("quantity", col("item.quantity"))
+        
+        # We'll drop the item column now :
+        self._df = self._df.drop("items", "item")
+        
+        # Load our product's details from our dataset.
+        self.get_products_details()
+                      
         # IDEAS : You have payment method that can be lot of options you need to convert everything to USD
-        self._df = self._df.withColumn("processed", lit(True))
+        self.convert_amount()
+        
+        self.mark_as_processed()
         
     def load_data(self):
         super().load_data()
@@ -82,15 +129,98 @@ class Pipeline1(MainProcessor):
     
     def write_data(self):
         super().write_data()
+    
+    def get_products_details(self):
+        """
+        Used to load the products details from our dataset and merge it to main dataframe.
+        """
+        # We'll need to gather more information about the item from our dataset, we'll load it then join it :
+        df_products = self.load_products()  
+
+        # Joining dataframes : 
+        self._df = self._df.join(broadcast(df_products), self._df.productId == df_products.item_id, "left")  
+    
+    def convert_amount(self) : 
+        """
+        Based on the payment method if it's crypto we'll convert it into usd, (we'll considering it's USD if it's not anyways)
+        """
+        df_rates = self.load_crypto_rates()
         
+        # Joining dataframes :
+        self._df = self._df.join(broadcast(df_rates), self._df.paymentMethod == df_rates.crypto_currency, "left")
+        
+        # For null values we'll consider it's USD
+        self._df = self._df.fillna(1, subset=["usd_rate"])
+        
+        # We'll convert the total amount to USD
+        self._df = self._df.withColumn("totalAmountUSD", col("totalAmount") * col("usd_rate"))
+     
+    def load_crypto_rates(self) -> SparkDataFrame:
+        """
+        Function used to load the exchange rates (amount) of supported crypto currencies to USD.
+        """  
+        res = {}
+        for crypto_currency in supported_crypto : 
+            my_rate = get_crypto_rates((crypto_currency).lower())
+            res[crypto_currency] = float(my_rate)
+
+            
+        # Transform the dictionary into a spark dataframe : 
+        columns = ["crypto_currency", "usd_rate"]
+        return self.spark.createDataFrame(list(res.items()), columns)
+        
+    def load_products(self) -> SparkDataFrame: 
+        """
+        This function will load the products dataset in our example it's a simple python dict but in real life it will be a dataset that needs to be loaded from a datalake or datawarehouse.
+        """
+        # Transform the dictionary into a list of tuples, here I could've used the name instead of id, just wanted to experience more with the data.
+        product_data = [( "P" + str(k.zfill(3)), v["name"], v["unit_price"]) for k, v in list_orders.items()]
+
+        # Define the schema
+        columns = ["item_id", "item_name", "item_unit_price"]
+
+        return self.spark.createDataFrame(product_data, columns)
+                
+    def mark_as_processed(self) :
+        super().mark_as_processed()
+        
+    
     
 class Pipeline2(MainProcessor):
     def __init__(self, spark: SparkSession):
         super().__init__(2, spark)
         
+    def __str__(self):
+        return super().__str__()
+    
     def process(self):
-        # IDEAS : Get city and postal code from shipping address
-        self._df = self._df.withColumn("processed2", lit(True))
+        # We'll get the shippiment details (like city, postal code and country) from the shipping address.
+        self.get_shipping_details()
+        
+        self.mark_as_processed()
+     
+    def get_shipping_details(self): 
+        """
+        Function will use the geopy to get information regarding the shipping address.
+        """
+        self._df = self._df.withColumn("city", lit("Unknown"))
+        self._df = self._df.withColumn("postal_code", lit("Unknown"))
+        self._df = self._df.withColumn("country", lit("Unknown"))
+        
+        # We'll use the function get_add_details to get the city, postal code and country from the shipping address.
+        # Initialize the UDF function :
+        get_add_details_udf = udf(get_add_details, ArrayType(StringType()))
+        
+        # Apply the UDF function to get the informations
+        self._df = self._df.withColumn("shipping_details", get_add_details_udf(col("shippingAddress")))
+        
+        # Split the information into differents columns :
+        self._df = self._df.withColumn("city", col("shipping_details")[0])
+        self._df = self._df.withColumn("postal_code", col("shipping_details")[1])
+        self._df = self._df.withColumn("country", col("shipping_details")[2])
+        
+        # Drop the column shipping_details :
+        self._df = self._df.drop("shipping_details")
         
     def load_data(self):
         super().load_data()
@@ -101,3 +231,5 @@ class Pipeline2(MainProcessor):
     def write_data(self):
         super().write_data()
         
+    def mark_as_processed(self) :
+        super().mark_as_processed()

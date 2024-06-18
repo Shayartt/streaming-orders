@@ -1,5 +1,7 @@
 
-payment_methods = ["CASH", "CREDIT CARD", "DEBIT CARD", "PAYPAL", "VENMO", "ZELLE", "BITCOIN", "ETHEREUM", "LITECOIN", "OTHER"]
+payment_methods = ["CASH", "CREDIT CARD", "DEBIT CARD", "PAYPAL", "VENMO", "ZELLE", "BITCOIN", "ETHEREUM", "DOGECOIN"]
+
+supported_crypto = ["BITCOIN", "ETHEREUM", "DOGECOIN"]
 
 payment_status = ["PAID", "PENDING", "FAILED"]
 
@@ -609,404 +611,104 @@ list_customer = {
 }
 
 list_orders = {
-  "1": {
-    "name": "P001",
-    "unit_price": 10.0
-  },
-  "2": {
-    "name": "P002",
-    "unit_price": 15.0
-  },
-  "3": {
-    "name": "P003",
-    "unit_price": 20.0
-  },
-  "4": {
-    "name": "P004",
-    "unit_price": 25.0
-  },
-  "5": {
-    "name": "P005",
-    "unit_price": 30.0
-  },
-  "6": {
-    "name": "P006",
-    "unit_price": 35.0
-  },
-  "7": {
-    "name": "P007",
-    "unit_price": 40.0
-  },
-  "8": {
-    "name": "P008",
-    "unit_price": 45.0
-  },
-  "9": {
-    "name": "P009",
-    "unit_price": 50.0
-  },
-  "10": {
-    "name": "P010",
-    "unit_price": 55.0
-  },
-  "11": {
-    "name": "P011",
-    "unit_price": 60.0
-  },
-  "12": {
-    "name": "P012",
-    "unit_price": 65.0
-  },
-  "13": {
-    "name": "P013",
-    "unit_price": 70.0
-  },
-  "14": {
-    "name": "P014",
-    "unit_price": 75.0
-  },
-  "15": {
-    "name": "P015",
-    "unit_price": 80.0
-  },
-  "16": {
-    "name": "P016",
-    "unit_price": 85.0
-  },
-  "17": {
-    "name": "P017",
-    "unit_price": 90.0
-  },
-  "18": {
-    "name": "P018",
-    "unit_price": 95.0
-  },
-  "19": {
-    "name": "P019",
-    "unit_price": 100.0
-  },
-  "20": {
-    "name": "P020",
-    "unit_price": 105.0
-  },
-  "21": {
-    "name": "P021",
-    "unit_price": 110.0
-  },
-  "22": {
-    "name": "P022",
-    "unit_price": 115.0
-  },
-  "23": {
-    "name": "P023",
-    "unit_price": 120.0
-  },
-  "24": {
-    "name": "P024",
-    "unit_price": 125.0
-  },
-  "25": {
-    "name": "P025",
-    "unit_price": 130.0
-  },
-  "26": {
-    "name": "P026",
-    "unit_price": 135.0
-  },
-  "27": {
-    "name": "P027",
-    "unit_price": 140.0
-  },
-  "28": {
-    "name": "P028",
-    "unit_price": 145.0
-  },
-  "29": {
-    "name": "P029",
-    "unit_price": 150.0
-  },
-  "30": {
-    "name": "P030",
-    "unit_price": 155.0
-  },
-  "31": {
-    "name": "P031",
-    "unit_price": 160.0
-  },
-  "32": {
-    "name": "P032",
-    "unit_price": 165.0
-  },
-  "33": {
-    "name": "P033",
-    "unit_price": 170.0
-  },
-  "34": {
-    "name": "P034",
-    "unit_price": 175.0
-  },
-  "35": {
-    "name": "P035",
-    "unit_price": 180.0
-  },
-  "36": {
-    "name": "P036",
-    "unit_price": 185.0
-  },
-  "37": {
-    "name": "P037",
-    "unit_price": 190.0
-  },
-  "38": {
-    "name": "P038",
-    "unit_price": 195.0
-  },
-  "39": {
-    "name": "P039",
-    "unit_price": 200.0
-  },
-  "40": {
-    "name": "P040",
-    "unit_price": 205.0
-  },
-  "41": {
-    "name": "P041",
-    "unit_price": 210.0
-  },
-  "42": {
-    "name": "P042",
-    "unit_price": 215.0
-  },
-  "43": {
-    "name": "P043",
-    "unit_price": 220.0
-  },
-  "44": {
-    "name": "P044",
-    "unit_price": 225.0
-  },
-  "45": {
-    "name": "P045",
-    "unit_price": 230.0
-  },
-  "46": {
-    "name": "P046",
-    "unit_price": 235.0
-  },
-  "47": {
-    "name": "P047",
-    "unit_price": 240.0
-  },
-  "48": {
-    "name": "P048",
-    "unit_price": 245.0
-  },
-  "49": {
-    "name": "P049",
-    "unit_price": 250.0
-  },
-  "50": {
-    "name": "P050",
-    "unit_price": 255.0
-  },
-  "51": {
-    "name": "P051",
-    "unit_price": 260.0
-  },
-  "52": {
-    "name": "P052",
-    "unit_price": 265.0
-  },
-  "53": {
-    "name": "P053",
-    "unit_price": 270.0
-  },
-  "54": {
-    "name": "P054",
-    "unit_price": 275.0
-  },
-  "55": {
-    "name": "P055",
-    "unit_price": 280.0
-  },
-  "56": {
-    "name": "P056",
-    "unit_price": 285.0
-  },
-  "57": {
-    "name": "P057",
-    "unit_price": 290.0
-  },
-  "58": {
-    "name": "P058",
-    "unit_price": 295.0
-  },
-  "59": {
-    "name": "P059",
-    "unit_price": 300.0
-  },
-  "60": {
-    "name": "P060",
-    "unit_price": 305.0
-  },
-  "61": {
-    "name": "P061",
-    "unit_price": 310.0
-  },
-  "62": {
-    "name": "P062",
-    "unit_price": 315.0
-  },
-  "63": {
-    "name": "P063",
-    "unit_price": 320.0
-  },
-  "64": {
-    "name": "P064",
-    "unit_price": 325.0
-  },
-  "65": {
-    "name": "P065",
-    "unit_price": 330.0
-  },
-  "66": {
-    "name": "P066",
-    "unit_price": 335.0
-  },
-  "67": {
-    "name": "P067",
-    "unit_price": 340.0
-  },
-  "68": {
-    "name": "P068",
-    "unit_price": 345.0
-  },
-  "69": {
-    "name": "P069",
-    "unit_price": 350.0
-  },
-  "70": {
-    "name": "P070",
-    "unit_price": 355.0
-  },
-  "71": {
-    "name": "P071",
-    "unit_price": 360.0
-  },
-  "72": {
-    "name": "P072",
-    "unit_price": 365.0
-  },
-  "73": {
-    "name": "P073",
-    "unit_price": 370.0
-  },
-  "74": {
-    "name": "P074",
-    "unit_price": 375.0
-  },
-  "75": {
-    "name": "P075",
-    "unit_price": 380.0
-  },
-  "76": {
-    "name": "P076",
-    "unit_price": 385.0
-  },
-  "77": {
-    "name": "P077",
-    "unit_price": 390.0
-  },
-  "78": {
-    "name": "P078",
-    "unit_price": 395.0
-  },
-  "79": {
-    "name": "P079",
-    "unit_price": 400.0
-  },
-  "80": {
-    "name": "P080",
-    "unit_price": 405.0
-  },
-  "81": {
-    "name": "P081",
-    "unit_price": 410.0
-  },
-  "82": {
-    "name": "P082",
-    "unit_price": 415.0
-  },
-  "83": {
-    "name": "P083",
-    "unit_price": 420.0
-  },
-  "84": {
-    "name": "P084",
-    "unit_price": 425.0
-  },
-  "85": {
-    "name": "P085",
-    "unit_price": 430.0
-  },
-  "86": {
-    "name": "P086",
-    "unit_price": 435.0
-  },
-  "87": {
-    "name": "P087",
-    "unit_price": 440.0
-  },
-  "88": {
-    "name": "P088",
-    "unit_price": 445.0
-  },
-  "89": {
-    "name": "P089",
-    "unit_price": 450.0
-  },
-  "90": {
-    "name": "P090",
-    "unit_price": 455.0
-  },
-  "91": {
-    "name": "P091",
-    "unit_price": 460.0
-  },
-  "92": {
-    "name": "P092",
-    "unit_price": 465.0
-  },
-  "93": {
-    "name": "P093",
-    "unit_price": 470.0
-  },
-  "94": {
-    "name": "P094",
-    "unit_price": 475.0
-  },
-  "95": {
-    "name": "P095",
-    "unit_price": 480.0
-  },
-  "96": {
-    "name": "P096",
-    "unit_price": 485.0
-  },
-  "97": {
-    "name": "P097",
-    "unit_price": 490.0
-  },
-  "98": {
-    "name": "P098",
-    "unit_price": 495.0
-  },
-  "99": {
-    "name": "P099",
-    "unit_price": 500.0
-  },
-  "100": {
-    "name": "P100",
-    "unit_price": 505.0
-  }
+  "1": {"name": "Widget", "unit_price": 10.0},
+  "2": {"name": "Gadget", "unit_price": 15.0},
+  "3": {"name": "Doodad", "unit_price": 20.0},
+  "4": {"name": "Thingamajig", "unit_price": 25.0},
+  "5": {"name": "Gizmo", "unit_price": 30.0},
+  "6": {"name": "Contraption", "unit_price": 35.0},
+  "7": {"name": "Device", "unit_price": 40.0},
+  "8": {"name": "Apparatus", "unit_price": 45.0},
+  "9": {"name": "Instrument", "unit_price": 50.0},
+  "10": {"name": "Mechanism", "unit_price": 55.0},
+  "11": {"name": "Machine", "unit_price": 60.0},
+  "12": {"name": "Tool", "unit_price": 65.0},
+  "13": {"name": "Implement", "unit_price": 70.0},
+  "14": {"name": "Utensil", "unit_price": 75.0},
+  "15": {"name": "Appliance", "unit_price": 80.0},
+  "16": {"name": "System", "unit_price": 85.0},
+  "17": {"name": "Equipment", "unit_price": 90.0},
+  "18": {"name": "Gear", "unit_price": 95.0},
+  "19": {"name": "Kit", "unit_price": 100.0},
+  "20": {"name": "Material", "unit_price": 105.0},
+  "21": {"name": "Product", "unit_price": 110.0},
+  "22": {"name": "Item", "unit_price": 115.0},
+  "23": {"name": "Component", "unit_price": 120.0},
+  "24": {"name": "Device", "unit_price": 125.0},
+  "25": {"name": "Tool", "unit_price": 130.0},
+  "26": {"name": "Utensil", "unit_price": 135.0},
+  "27": {"name": "Machine", "unit_price": 140.0},
+  "28": {"name": "System", "unit_price": 145.0},
+  "29": {"name": "Equipment", "unit_price": 150.0},
+  "30": {"name": "Product", "unit_price": 155.0},
+  "31": {"name": "Material", "unit_price": 160.0},
+  "32": {"name": "Gadget", "unit_price": 165.0},
+  "33": {"name": "Doodad", "unit_price": 170.0},
+  "34": {"name": "Thingamajig", "unit_price": 175.0},
+  "35": {"name": "Gizmo", "unit_price": 180.0},
+  "36": {"name": "Contraption", "unit_price": 185.0},
+  "37": {"name": "Device", "unit_price": 190.0},
+  "38": {"name": "Apparatus", "unit_price": 195.0},
+  "39": {"name": "Instrument", "unit_price": 200.0},
+  "40": {"name": "Mechanism", "unit_price": 205.0},
+  "41": {"name": "Machine", "unit_price": 210.0},
+  "42": {"name": "Tool", "unit_price": 215.0},
+  "43": {"name": "Implement", "unit_price": 220.0},
+  "44": {"name": "Utensil", "unit_price": 225.0},
+  "45": {"name": "Appliance", "unit_price": 230.0},
+  "46": {"name": "System", "unit_price": 235.0},
+  "47": {"name": "Equipment", "unit_price": 240.0},
+  "48": {"name": "Gear", "unit_price": 245.0},
+  "49": {"name": "Kit", "unit_price": 250.0},
+  "50": {"name": "Material", "unit_price": 255.0},
+  "51": {"name": "Widget", "unit_price": 260.0},
+  "52": {"name": "Gadget", "unit_price": 265.0},
+  "53": {"name": "Doodad", "unit_price": 270.0},
+  "54": {"name": "Thingamajig", "unit_price": 275.0},
+  "55": {"name": "Gizmo", "unit_price": 280.0},
+  "56": {"name": "Contraption", "unit_price": 285.0},
+  "57": {"name": "Device", "unit_price": 290.0},
+  "58": {"name": "Apparatus", "unit_price": 295.0},
+  "59": {"name": "Instrument", "unit_price": 300.0},
+  "60": {"name": "Mechanism", "unit_price": 305.0},
+  "61": {"name": "Machine", "unit_price": 310.0},
+  "62": {"name": "Tool", "unit_price": 315.0},
+  "63": {"name": "Implement", "unit_price": 320.0},
+  "64": {"name": "Utensil", "unit_price": 325.0},
+  "65": {"name": "Appliance", "unit_price": 330.0},
+  "66": {"name": "System", "unit_price": 335.0},
+  "67": {"name": "Equipment", "unit_price": 340.0},
+  "68": {"name": "Gear", "unit_price": 345.0},
+  "69": {"name": "Kit", "unit_price": 350.0},
+  "70": {"name": "Material", "unit_price": 355.0},
+  "71": {"name": "Product", "unit_price": 360.0},
+  "72": {"name": "Item", "unit_price": 365.0},
+  "73": {"name": "Component", "unit_price": 370.0},
+  "74": {"name": "Device", "unit_price": 375.0},
+  "75": {"name": "Tool", "unit_price": 380.0},
+  "76": {"name": "Utensil", "unit_price": 385.0},
+  "77": {"name": "Machine", "unit_price": 390.0},
+  "78": {"name": "System", "unit_price": 395.0},
+  "79": {"name": "Equipment", "unit_price": 400.0},
+  "80": {"name": "Product", "unit_price": 405.0},
+  "81": {"name": "Material", "unit_price": 410.0},
+  "82": {"name": "Gadget", "unit_price": 415.0},
+  "83": {"name": "Doodad", "unit_price": 420.0},
+  "84": {"name": "Thingamajig", "unit_price": 425.0},
+  "85": {"name": "Gizmo", "unit_price": 430.0},
+  "86": {"name": "Contraption", "unit_price": 435.0},
+  "87": {"name": "Device", "unit_price": 440.0},
+  "88": {"name": "Apparatus", "unit_price": 445.0},
+  "89": {"name": "Instrument", "unit_price": 450.0},
+  "90": {"name": "Mechanism", "unit_price": 455.0},
+  "91": {"name": "Machine", "unit_price": 460.0},
+  "92": {"name": "Tool", "unit_price": 465.0},
+  "93": {"name": "Implement", "unit_price": 470.0},
+  "94": {"name": "Utensil", "unit_price": 475.0},
+  "95": {"name": "Appliance", "unit_price": 480.0},
+  "96": {"name": "System", "unit_price": 485.0},
+  "97": {"name": "Equipment", "unit_price": 490.0},
+  "98": {"name": "Gear", "unit_price": 495.0},
+  "99": {"name": "Kit", "unit_price": 500.0},
+  "100": {"name": "Material", "unit_price": 505.0}
 }

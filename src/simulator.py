@@ -61,7 +61,7 @@ def generate_order() :
         # Get unity price from dict : 
         unit_price = list_orders[productId]
         totalAmount += quantity * unit_price['unit_price']
-        items.append(OrderItem(productId=unit_price['name'], quantity=quantity))
+        items.append(OrderItem(productId= "P" + str(productId).zfill(3), quantity=quantity))
     
     # Payment & Order details
     paymentMethod = random.choice(payment_methods)
