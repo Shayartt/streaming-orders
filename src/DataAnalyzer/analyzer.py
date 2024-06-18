@@ -11,16 +11,29 @@ class DataAnalyzer:
     def __post_init__(self):
         self.__MAX_ORDER_PER_HOUR: int = 6
         self._df = None
-        self.input_folder: str = f"s3://labdataset/delta/orders_pipeline_2" # We will use the last pipeline, maybe make it dynamic later it's fien for now.
+        self._input_folder: str = f"s3://labdataset/delta/orders_pipeline_2" # We will use the last pipeline, maybe make it dynamic later it's fien for now.
+        self.analyzed = False
         
     def __str__(self):
-        return f"Analyzer ready to analyze {self._df.count()} rows. \n"
+        return f"Analyzer ready to analyze {self._df.count()} rows. \nData Loaded from : {self._input_folder}\n Status of analysis : {self.analyzed}"
     
+    def set_input_folder(self, folder: str) -> None:
+        """
+        Set the input folder to load the data.
+        """
+        self._input_folder = folder
+        
+    def get_input_folder(self) -> str:
+        """
+        Get the input folder to load the data.
+        """
+        return self._input_folder
+        
     def load_data(self):
         """
         Load the data from result folder.
         """
-        self._df = self.spark.read.format("delta").load(self.input_folder)
+        self._df = self.spark.read.format("delta").load(self._input_folder)
         
     def analyze(self) -> None:
         """
@@ -55,6 +68,9 @@ class DataAnalyzer:
 
         # Total amount per payment method.
         self.amount_per_payment_method = self.total_amount_per_payment_method().toPandas()
+        
+        # Mark as analyzed.
+        self.analyzed = True
         
     def detect_fraud(self) -> SparkDataFrame: 
         """
