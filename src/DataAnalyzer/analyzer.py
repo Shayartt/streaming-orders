@@ -67,7 +67,7 @@ class DataAnalyzer:
         self.countries_per_amount = self.top_countries().toPandas()
 
         # Total amount per payment method.
-        self.amount_per_payment_method = self.total_amount_per_payment_method().toPandas()
+        self.amount_per_payment_method = self.total_amount_per_payment_method_day().toPandas()
         
         # Mark as analyzed.
         self.analyzed = True
@@ -79,7 +79,7 @@ class DataAnalyzer:
         res = self._df.groupBy("customerId", window("orderDate", "1 hour")).count().filter(col("count") > self.__MAX_ORDER_PER_HOUR)
         
         if save_as_table: ## Overwrite because we load the whole data everytime. chekc raadme.md for more details/ recommendations.
-            res.write.mode("overwrite").format("delta").saveAsTable("fraud_detection")
+            res.write.mode("overwrite").saveAsTable("orders.analyzer.fraud_detection")
         
         return res
     
@@ -88,8 +88,8 @@ class DataAnalyzer:
         Segment the customers based on the amount of orders.
         """
         return self._df.groupBy("customerId").count().withColumn("segment", 
-                                                                  when(col("count") > 10, "VIP")
-                                                                  .when(col("count") > 5, "Regular")
+                                                                  when(col("count") > 8500, "VIP")
+                                                                  .when(col("count") > 900, "Regular")
                                                                   .otherwise("Normal"))
         
     def top_10_cities(self):
@@ -104,8 +104,11 @@ class DataAnalyzer:
         """
         return self._df.groupBy("country").sum("totalAmountUSD").orderBy(col("sum(totalAmountUSD)").desc())
     
-    def total_amount_per_payment_method(self):
+    def total_amount_per_payment_method_day(self):
         """
-        Get the total amount per payment method.
+        Get the total amount per payment method per day.
         """
-        return self._df.groupBy("paymentMethod").sum("totalAmountUSD").orderBy(col("sum(totalAmountUSD)").desc())
+        # Get the day of the order orderDate : 
+        self._df = self._df.withColumn("my_date", col("orderDate").cast("date"))
+        
+        return self._df.groupBy("paymentMethod", "my_date").sum("totalAmountUSD")

@@ -67,6 +67,12 @@ def generate_order() :
     paymentMethod = random.choice(payment_methods)
     paymentStatus = random.choice(payment_status)
     orderStatus = random.choice(order_status)
+    
+    if payment_methods == "BITCOIN" : 
+        totalAmount = totalAmount * 0.000001
+    elif payment_methods == "ETHEREUM" :    
+        totalAmount = totalAmount * 0.01
+    
 
     # Create order obj : 
     return Order(
@@ -101,8 +107,13 @@ def main():
     num_of_orders = input("Enter the number of orders to generate: ")
     list_orders = []
     for i in range(int(num_of_orders)):
-        if i % 100 == 0:
+        if i % 10000 == 0:
             print(f"Generated {i} orders")
+            # Produce to my kafka topic : 
+            my_producer.produce(list_orders)
+            # Empty my list :
+            list_orders = []
+            
         # Append to my list:
         list_orders.append(generate_order())
         
