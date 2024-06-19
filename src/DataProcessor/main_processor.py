@@ -203,24 +203,32 @@ class Pipeline2(MainProcessor):
         """
         Function will use the geopy to get information regarding the shipping address.
         """
-        self._df = self._df.withColumn("city", lit("Unknown"))
-        self._df = self._df.withColumn("postal_code", lit("Unknown"))
-        self._df = self._df.withColumn("country", lit("Unknown"))
         
         # We'll use the function get_add_details to get the city, postal code and country from the shipping address.
         # Initialize the UDF function :
         get_add_details_udf = udf(get_add_details, ArrayType(StringType()))
         
+        # To optimize the execution time we'll get the distinct address as a seperate dataframe and broadcast it.
+        df_address = self._df.select("shippingAddress").distinct()
+        
+        # Initialize the columns with Unknown values :
+        df_address = df_address.withColumn("city", lit("Unknown"))
+        df_address = df_address.withColumn("postal_code", lit("Unknown"))
+        df_address = df_address.withColumn("country", lit("Unknown"))
+        
         # Apply the UDF function to get the informations
-        self._df = self._df.withColumn("shipping_details", get_add_details_udf(col("shippingAddress")))
+        df_address = df_address.withColumn("shipping_details", get_add_details_udf(col("shippingAddress")))
         
         # Split the information into differents columns :
-        self._df = self._df.withColumn("city", col("shipping_details")[0])
-        self._df = self._df.withColumn("postal_code", col("shipping_details")[1])
-        self._df = self._df.withColumn("country", col("shipping_details")[2])
+        df_address = df_address.withColumn("city", col("shipping_details")[0])
+        df_address = df_address.withColumn("postal_code", col("shipping_details")[1])
+        df_address = df_address.withColumn("country", col("shipping_details")[2])
         
         # Drop the column shipping_details :
-        self._df = self._df.drop("shipping_details")
+        df_address = df_address.drop("shipping_details")
+        
+        # Join the dataframes, by doing this instead of calling the function for each row we'll call it only once for each distinct address.
+        self._df = self._df.join(broadcast(df_address), "shippingAddress", "left")
         
     def load_data(self):
         super().load_data()

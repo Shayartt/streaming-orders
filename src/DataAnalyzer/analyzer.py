@@ -72,11 +72,16 @@ class DataAnalyzer:
         # Mark as analyzed.
         self.analyzed = True
         
-    def detect_fraud(self) -> SparkDataFrame: 
+    def detect_fraud(self, save_as_table: bool= True) -> SparkDataFrame: 
         """
         Group by customer_id in windows of 1 hour and count the number of orders, if higher than MAX_ORDER_PER_HOUR, it's fraud.
         """
-        return self._df.groupBy("customerId", window("orderDate", "1 hour")).count().filter(col("count") > self.__MAX_ORDER_PER_HOUR)
+        res = self._df.groupBy("customerId", window("orderDate", "1 hour")).count().filter(col("count") > self.__MAX_ORDER_PER_HOUR)
+        
+        if save_as_table: ## Overwrite because we load the whole data everytime. chekc raadme.md for more details/ recommendations.
+            res.write.mode("overwrite").format("delta").saveAsTable("fraud_detection")
+        
+        return res
     
     def client_segmentation(self) -> SparkDataFrame:
         """
