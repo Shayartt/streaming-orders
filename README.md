@@ -15,10 +15,20 @@ More details to be included later...
 ### Milestones : 
 
 + Stream orders from Kafka: Simulate a real-time stream of orders from an e-commerce platform. (Kafka Confluent)
+    - Kafka Setup in confluent.
+         ![KafkaTopic](docs/screens/kafka_topic.png?raw=true "KafkaTopic")
+    - Producer simulation in src/simulator.py
 + Streaming ingesting & processing : Create spark jobs to read from our kafka stream, apply etl pipelines and write our data into a delta lake (Databricks workflows + AWS S3)
+    - Streaming : 
+        ![Streamingflow](docs/screens/streaming_workflow.PNG?raw=true "Streamingflow")
+    - Processing :
+        ![Processingflow](docs/screens/processing_workflow.png?raw=true "Processingflow")
 + Analytics Pipelines : the final step of any workflow triggered on new orders received need to apply some analysis tasks as mentionned bellow :
-    - Develop a fraud detection algorithm that flags suspicious orders based on patterns such as high-value orders, frequent orders from the same customer, etc.
+    - Develop a fraud detection rules that flags suspicious orders based on patterns such as high-value orders, frequent orders from the same customer, etc.
     - Alerting: Set up alerts for flagged suspected clients using Databricks alerting systems (email only).
+        + Done using Databricks SQL Alerts, the analyzer code will store results into a delta table, and via databricks platform we setup trigger based on that table.
+            ![Fraud Rule](docs/screens/Fraud_alerts.png?raw=true "Fraud Rule")
+
  
 + Additional Challenges : as this is a learning project, I decided to add some challenging use-cases to simulate real-life problems as mentionned bellow :
     -  Data Schema Evolution: Handle changes in the data schema over time, such as new fields being added to the order data, and changing types.
