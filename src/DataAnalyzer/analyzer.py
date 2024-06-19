@@ -60,11 +60,11 @@ class DataAnalyzer:
         if self.segment_df.shape[0] > 0:
             self.segment_df = self.segment_df.groupby('segment')['count'].sum().reset_index()
         
-        # Count per city and get top 10 cities with most orders.
-        self.cities_per_orders = self.top_10_cities().toPandas()
+        # Count per city and get top 10 cities with higher total amount.
+        self.cities_per_amount = self.top_10_cities().toPandas().head(10)
         
-        # Get TOP countries per total amount :
-        self.countries_per_amount = self.top_countries().toPandas()
+        # Get TOP countries per orders :
+        self.countries_per_order = self.top_countries().toPandas()
 
         # Total amount per payment method.
         self.amount_per_payment_method = self.total_amount_per_payment_method_day().toPandas()
@@ -88,21 +88,22 @@ class DataAnalyzer:
         Segment the customers based on the amount of orders.
         """
         return self._df.groupBy("customerId").count().withColumn("segment", 
-                                                                  when(col("count") > 8500, "VIP")
+                                                                  when(col("count") > 3500, "VIP")
                                                                   .when(col("count") > 900, "Regular")
                                                                   .otherwise("Normal"))
         
     def top_10_cities(self):
         """
-        Get the top 10 cities with most orders.
+        Get the top 10 cities with higher order's amount.
         """
-        return self._df.groupBy("city").count().orderBy(col("count").desc()).limit(10)
+       
+        return  self._df.groupBy("city").sum("totalAmountUSD").orderBy(col("sum(totalAmountUSD)").desc())
     
     def top_countries(self):
         """
-        Get the top countries with most total amount.
+        Get the top countries with most orders.
         """
-        return self._df.groupBy("country").sum("totalAmountUSD").orderBy(col("sum(totalAmountUSD)").desc())
+        return self._df.groupBy("country").count().orderBy(col("count").desc()).limit(10)
     
     def total_amount_per_payment_method_day(self):
         """

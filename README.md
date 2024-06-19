@@ -29,6 +29,11 @@ More details to be included later...
         + Done using Databricks SQL Alerts, the analyzer code will store results into a delta table, and via databricks platform we setup trigger based on that table.
             ![Fraud Rule](docs/screens/Fraud_alerts.png?raw=true "Fraud Rule")
 
++ Vizualization : It's not the main objective of this project, but we'll create a quick dashboard included some analytical statistics using databricks dashboarding.
+    ![dash_1](docs/screens/dash_1.png?raw=true "dash_1")
+    ![dash_2](docs/screens/dash_2.png?raw=true "dash_2")
+    ![dash_3](docs/screens/dash_3.png?raw=true "dash_3")
+
  
 + Additional Challenges : as this is a learning project, I decided to add some challenging use-cases to simulate real-life problems as mentionned bellow :
     -  Data Schema Evolution: Handle changes in the data schema over time, such as new fields being added to the order data, and changing types.

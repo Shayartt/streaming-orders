@@ -107,7 +107,7 @@ def main():
     num_of_orders = input("Enter the number of orders to generate: ")
     list_orders = []
     for i in range(int(num_of_orders)):
-        if i % 10000 == 0:
+        if i % 1000 == 0:
             print(f"Generated {i} orders")
             # Produce to my kafka topic : 
             my_producer.produce(list_orders)
