@@ -14,31 +14,31 @@ More details to be included later...
 
 ### Milestones : 
 
-+ Stream orders from Kafka: Simulate a real-time stream of orders from an e-commerce platform. (Kafka Confluent)
++ Stream orders from Kafka: Simulate a real-time stream of orders from an e-commerce platform. (Kafka Confluent) ✅
     - Kafka Setup in confluent.
          ![KafkaTopic](docs/screens/kafka_topic.png?raw=true "KafkaTopic")
     - Producer simulation in src/simulator.py
-+ Streaming ingesting & processing : Create spark jobs to read from our kafka stream, apply etl pipelines and write our data into a delta lake (Databricks workflows + AWS S3)
-    - Streaming : 
++ Streaming ingesting & processing : Create spark jobs to read from our kafka stream, apply etl pipelines and write our data into a delta lake (Databricks workflows + AWS S3) ✅
+    - Streaming :  🚀
         ![Streamingflow](docs/screens/streaming_workflow.PNG?raw=true "Streamingflow")
-    - Processing :
+    - Processing : 🛠️
         ![Processingflow](docs/screens/processing_workflow.png?raw=true "Processingflow")
-+ Analytics Pipelines : the final step of any workflow triggered on new orders received need to apply some analysis tasks as mentionned bellow :
-    - Develop a fraud detection rules that flags suspicious orders based on patterns such as high-value orders, frequent orders from the same customer, etc.
-    - Alerting: Set up alerts for flagged suspected clients using Databricks alerting systems (email only).
-        + Done using Databricks SQL Alerts, the analyzer code will store results into a delta table, and via databricks platform we setup trigger based on that table.
++ Analytics Pipelines : the final step of any workflow triggered on new orders received need to apply some analysis tasks as mentionned bellow :✅
+    - Develop a fraud detection rules that flags suspicious orders based on patterns such as high-value orders, frequent orders from the same customer, etc. 💡
+    - Alerting: Set up alerts for flagged suspected clients using Databricks alerting systems (email only). 🚨
+        + <span style="color:blue"> Done using Databricks SQL Alerts, the analyzer code will store results into a delta table, and via databricks platform we setup trigger based on that table.</span>
             ![Fraud Rule](docs/screens/Fraud_alerts.png?raw=true "Fraud Rule")
 
-+ Vizualization : It's not the main objective of this project, but we'll create a quick dashboard included some analytical statistics using databricks dashboarding.
++ Vizualization : It's not the main objective of this project, but we'll create a quick dashboard included some analytical statistics using databricks dashboarding. 👀
     ![dash_1](docs/screens/dash_1.png?raw=true "dash_1")
     ![dash_2](docs/screens/dash_2.png?raw=true "dash_2")
     ![dash_3](docs/screens/dash_3.png?raw=true "dash_3")
 
  
-+ Additional Challenges : as this is a learning project, I decided to add some challenging use-cases to simulate real-life problems as mentionned bellow :
-    -  Data Schema Evolution: Handle changes in the data schema over time, such as new fields being added to the order data, and changing types.
-    -  Data Schema Evolution: Ensure backward and forward compatibility in our streaming pipeline.
-        + I've added a new field called "message" in my topic and changed the producer code to include it from one side, from the other side I had to enable the merge schema to allow schema evolution in my delta table, to allow backward compatibility I provided a default value to my new field.
++ Additional Challenges : as this is a learning project, I decided to add some challenging use-cases to simulate real-life problems as mentionned bellow : 🤓
+    -  Data Schema Evolution: Handle changes in the data schema over time, such as new fields being added to the order data, and changing types. 🔄
+    -  Data Schema Evolution: Ensure backward and forward compatibility in our streaming pipeline. 🔄
+        + <span style="color:blue"> I've added a new field called "message" in my topic and changed the producer code to include it from one side, from the other side I had to enable the merge schema to allow schema evolution in my delta table, to allow backward compatibility I provided a default value to my new field. </span>
 
     -  Exactly-Once Processing: Implement exactly-once processing semantics to ensure that each order is processed exactly once, even in the case of failures. (Avoid dupplication)
     -  Stateful Stream Processing: Use stateful transformations to keep track of state across events. For example, maintain a running total of orders per customer or product category.
