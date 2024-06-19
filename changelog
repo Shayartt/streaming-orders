@@ -4,3 +4,7 @@ Streaming Ingestion
 ETL processing
 Analytics dashboard
 Alerting system
+
+V2-0-0:
+
+Added a new field called "message" to include the customer's specification, backward and forward compatibility is handled in our schema evolution.

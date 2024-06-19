@@ -56,6 +56,7 @@ class MainProcessor(ABC):
         self._df.write \
         .format("delta") \
         .mode("append") \
+        .option("mergeSchema", "true") \
         .save(f"s3://labdataset/delta/orders_pipeline_{self.pipeline_id}")
  
         # Clean the processed data using distinct batch_id : 
@@ -101,7 +102,8 @@ class Pipeline1(MainProcessor):
             col('parsedValue.items').alias('items'),
             col('parsedValue.paymentMethod').alias('paymentMethod'),
             col('parsedValue.paymentStatus').alias('paymentStatus'),
-            col('parsedValue.orderStatus').alias('orderStatus')
+            col('parsedValue.orderStatus').alias('orderStatus'),
+            col('parsedValue.message').alias('message')
         )
         # Here the items columns is a list of dict, we need to explode it :
         self._df = self._df.withColumn("item", explode(col("items")))

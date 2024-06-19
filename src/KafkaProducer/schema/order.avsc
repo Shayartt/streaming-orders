@@ -51,6 +51,11 @@
 	  {
 		"name": "orderStatus",
 		"type": "string"
+	  },
+	  {
+		"default": "",
+		"name": "message",
+		"type": "string"
 	  }
 	],
 	"name": "Order",

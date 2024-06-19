@@ -30,6 +30,7 @@ class Order:
     paymentMethod: str
     paymentStatus: str
     orderStatus: str
+    message: str = "Test Evolve Schema purpose.."
         
         
 def generate_order() : 
@@ -97,7 +98,8 @@ def to_dict(order: Order, ctx: any = None) -> dict:
         items=[dict(productId=item.productId, quantity=item.quantity) for item in order.items],
         paymentMethod=order.paymentMethod,
         paymentStatus=order.paymentStatus,
-        orderStatus=order.orderStatus
+        orderStatus=order.orderStatus,
+        message=order.message
     )
     
     

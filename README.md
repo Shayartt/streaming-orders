@@ -38,6 +38,8 @@ More details to be included later...
 + Additional Challenges : as this is a learning project, I decided to add some challenging use-cases to simulate real-life problems as mentionned bellow :
     -  Data Schema Evolution: Handle changes in the data schema over time, such as new fields being added to the order data, and changing types.
     -  Data Schema Evolution: Ensure backward and forward compatibility in our streaming pipeline.
+        + I've added a new field called "message" in my topic and changed the producer code to include it from one side, from the other side I had to enable the merge schema to allow schema evolution in my delta table, to allow backward compatibility I provided a default value to my new field.
+
     -  Exactly-Once Processing: Implement exactly-once processing semantics to ensure that each order is processed exactly once, even in the case of failures. (Avoid dupplication)
     -  Stateful Stream Processing: Use stateful transformations to keep track of state across events. For example, maintain a running total of orders per customer or product category.
     -  Scalability and Performance Optimization: Optimize your Spark streaming jobs for performance and scalability. This includes tuning Spark configurations, partitioning data effectively, and minimizing data shuffles.
