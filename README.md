@@ -41,8 +41,14 @@ More details to be included later...
     -  Stateful Stream Processing: Use stateful transformations to keep track of state across events. For example, maintain a running total of orders per customer or product category.
         + Implemented two live counters in statefull_streaming.ipynb.
     -  Scalability and Performance Optimization: Optimize your Spark streaming jobs for performance and scalability. This includes tuning Spark configurations, partitioning data effectively, and minimizing data shuffles.
+        + Optimization done during the code, for example used of pre-built functions, broadcast functions... 
+        + Scalability: Added field dateOrder, and change the previous one to Datetime.
+        + Uses of concept : bronze, silver, gold tables instead of saving it directly into s3 path.
     -  Data Quality Monitoring: Implement real-time data quality checks and monitoring. Alert if data quality issues such as missing values, duplicates, or outliers are detected.
+        + Implemented withing the statefull_streaming notebook.
     -  Data Enrichment: Enrich your streaming data with additional context from external data sources. For example, enrich order data with customer demographics or product details from a database.
+        + Implementation of Enums to generate additional informations + GEOPY to get localisation informations.
     -  Real-Time Analytics and Reporting: Build real-time analytics and reporting dashboards using tools like Databricks SQL, Power BI, or Tableau. Visualize key metrics such as order volume, sales trends, and customer behavior.
+        - DataBricks Dashboard based on Seaborn & PyPlot read from a real-time delta lake.
  
 

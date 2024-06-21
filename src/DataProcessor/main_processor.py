@@ -20,11 +20,9 @@ class MainProcessor(ABC):
     spark: SparkSession
     
     def __post_init__(self):
-        if self.pipeline_id == 1 : 
-            self.input_folder = "s3://labdataset/delta/orders"
-        else : 
-            self.input_folder = f"s3://labdataset/delta/orders_pipeline_{self.pipeline_id-1}"
-            
+        # For scalling reason, these will be inits withing the child classes. it's a better practice.
+        self.input_folder = None
+        self.table_name = None
         self._df = None
     
     def __str__(self):
@@ -55,9 +53,10 @@ class MainProcessor(ABC):
         """
         self._df.write \
         .format("delta") \
+        .partitionBy("orderDate") \
         .mode("append") \
         .option("mergeSchema", "true") \
-        .save(f"s3://labdataset/delta/orders_pipeline_{self.pipeline_id}")
+        .saveAsTable(f"orders.pipeline_{self.table_name}") # We'll save it as a table now for better use of concept tables : bronze, silver ,gold
  
         # Clean the processed data using distinct batch_id : 
         my_unique_ids = self._df.select("batch_id").distinct()
@@ -86,6 +85,8 @@ class MainProcessor(ABC):
 class Pipeline1(MainProcessor):
     def __init__(self, spark: SparkSession):
         super().__init__(1, spark)
+        self.input_folder = "s3://labdataset/delta/orders"
+        self.table_name = "silver_orders"
     
     def __str__(self):
         return super().__str__()
@@ -95,7 +96,7 @@ class Pipeline1(MainProcessor):
         self._df = self._df.select(
             col('batch_id'),
             col('parsedValue.orderId').alias('orderId'),
-            col('parsedValue.orderDate').alias('orderDate'),
+            col('parsedValue.orderDate').alias('orderDateTime'),
             col('parsedValue.customerId').alias('customerId'),
             col('parsedValue.shippingAddress').alias('shippingAddress'),
             col('parsedValue.totalAmount').alias('totalAmount'),
@@ -105,6 +106,11 @@ class Pipeline1(MainProcessor):
             col('parsedValue.orderStatus').alias('orderStatus'),
             col('parsedValue.message').alias('message')
         )
+        
+        # Get the date from the orderDate column (datetime) : 
+        self._df = self._df.withColumn("orderDateTime", col("orderDateTime").cast("timestamp"))
+        self._df = self._df.withColumn("orderDate", col("orderDateTime").cast("date")) 
+        
         # Here the items columns is a list of dict, we need to explode it :
         self._df = self._df.withColumn("item", explode(col("items")))
         
@@ -191,6 +197,8 @@ class Pipeline1(MainProcessor):
 class Pipeline2(MainProcessor):
     def __init__(self, spark: SparkSession):
         super().__init__(2, spark)
+        self.input_folder = f"s3://labdataset/delta/orders_pipeline_{self.pipeline_id-1}_partitioned"
+        self.table_name = "gold_orders"
         
     def __str__(self):
         return super().__str__()

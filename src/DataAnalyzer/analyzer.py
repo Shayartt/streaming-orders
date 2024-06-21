@@ -11,7 +11,7 @@ class DataAnalyzer:
     def __post_init__(self):
         self.__MAX_ORDER_PER_HOUR: int = 6
         self._df = None
-        self._input_folder: str = f"s3://labdataset/delta/orders_pipeline_2" # We will use the last pipeline, maybe make it dynamic later it's fien for now.
+        self._input_folder: str = f"s3://labdataset/delta/orders_pipeline_2_partitioned" # We will use the last pipeline, maybe make it dynamic later it's fien for now.
         self.analyzed = False
         
     def __str__(self):
@@ -76,7 +76,7 @@ class DataAnalyzer:
         """
         Group by customer_id in windows of 1 hour and count the number of orders, if higher than MAX_ORDER_PER_HOUR, it's fraud.
         """
-        res = self._df.groupBy("customerId", window("orderDate", "1 hour")).count().filter(col("count") > self.__MAX_ORDER_PER_HOUR)
+        res = self._df.groupBy("customerId", window("orderDateTime", "1 hour")).count().filter(col("count") > self.__MAX_ORDER_PER_HOUR)
         
         if save_as_table: ## Overwrite because we load the whole data everytime. chekc raadme.md for more details/ recommendations.
             res.write.mode("overwrite").saveAsTable("orders.analyzer.fraud_detection")
@@ -109,7 +109,7 @@ class DataAnalyzer:
         """
         Get the total amount per payment method per day.
         """
-        # Get the day of the order orderDate : 
-        self._df = self._df.withColumn("my_date", col("orderDate").cast("date"))
+        # Get the day of the order orderDateTime : 
+        self._df = self._df.withColumn("my_date", col("orderDateTime").cast("date"))
         
         return self._df.groupBy("paymentMethod", "my_date").sum("totalAmountUSD")
