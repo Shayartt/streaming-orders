@@ -39,6 +39,7 @@ More details to be included later...
 
     -  Exactly-Once Processing: Implement exactly-once processing semantics to ensure that each order is processed exactly once, even in the case of failures. (Avoid dupplication)
     -  Stateful Stream Processing: Use stateful transformations to keep track of state across events. For example, maintain a running total of orders per customer or product category.
+        + Implemented two live counters in statefull_streaming.ipynb.
     -  Scalability and Performance Optimization: Optimize your Spark streaming jobs for performance and scalability. This includes tuning Spark configurations, partitioning data effectively, and minimizing data shuffles.
     -  Data Quality Monitoring: Implement real-time data quality checks and monitoring. Alert if data quality issues such as missing values, duplicates, or outliers are detected.
     -  Data Enrichment: Enrich your streaming data with additional context from external data sources. For example, enrich order data with customer demographics or product details from a database.
